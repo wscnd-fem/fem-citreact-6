@@ -13,7 +13,7 @@ const SearchParams = () => {
 
   const requestPets = async (animal, breed, location) => {
     const res = await fetch(
-      `https://pets-v2.dev-apis.com/pets?animal=${animal}&location=${location}&breed=${breed}`
+      `http://pets-v2.dev-apis.com/pets?animal=${animal}&location=${location}&breed=${breed}`
     );
     const json = await res.json();
     setPets(json.pets);
@@ -39,7 +39,7 @@ const SearchParams = () => {
             id="location"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            placeholder="Location"
+            placeholder="Location" /** @type {import('webpack').Configuration} */
           />
         </label>
 
