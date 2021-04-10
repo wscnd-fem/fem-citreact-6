@@ -8,7 +8,7 @@ const state = Object.freeze({
   LOADED: 'loaded',
 });
 
-export default function useBreedList(animal = []) {
+export default function useAnimalList(animal = []) {
   const [breedList, setBreedList] = useState([]);
   const [loading, setLoading] = useState(state.UNLOADED);
 
