@@ -1,16 +1,11 @@
 import { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import Carousel from './Carousel';
+import { ErrorBoundary } from './ErrorBoundary';
 
 class Details extends Component {
   state = {
     loading: true,
-    name: '',
-    animal: '',
-    breed: '',
-    city: '',
-    state: '',
-    description: '',
   };
 
   async componentDidMount() {
@@ -21,7 +16,6 @@ class Details extends Component {
     const json = await res.json();
 
     const pet = json.pets[0] ?? [];
-    console.log(pet);
 
     this.setState({
       loading: false,
@@ -36,6 +30,14 @@ class Details extends Component {
   }
 
   render() {
+    if (this.state.loading) {
+      return (
+        <div className="details">
+          <h1>loading ...</h1>
+        </div>
+      );
+    }
+
     const {
       animal,
       breed,
@@ -46,26 +48,33 @@ class Details extends Component {
       images,
     } = this.state;
 
+    console.log(animal, breed, city, description);
+
+    if (!animal) {
+      throw new Error('error!');
+    }
+
     return (
       <div className="details">
         <div>
-          {this.state.loading ? (
-            <h1>loading ...</h1>
-          ) : (
-            <>
-              <Carousel images={images} />
-              <h1>{name}</h1>
-              <h2>
-                {animal} - {breed} - {city}, {state}
-              </h2>
-              <button>Adopt {name} </button>
-              <p>{description}</p>
-            </>
-          )}
+          <Carousel images={images} />
+          <h1>{name}</h1>
+          <h2>
+            {animal} - {breed} - {city}, {state}
+          </h2>
+          <button>Adopt {name} </button>
+          <p>{description}</p>
         </div>
       </div>
     );
   }
 }
+const DetailsWithRouter = withRouter(Details);
 
-export default withRouter(Details);
+export default function DetailsWithErrorBoundary() {
+  return (
+    <ErrorBoundary>
+      <DetailsWithRouter />
+    </ErrorBoundary>
+  );
+}
