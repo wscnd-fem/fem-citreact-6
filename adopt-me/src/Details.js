@@ -4,11 +4,13 @@ import { withRouter } from 'react-router-dom';
 
 import Carousel from './Carousel';
 import { ErrorBoundary } from './ErrorBoundary';
+import Modal from './Modal';
 import ThemeContext from './ThemeContext';
 
 class Details extends Component {
   state = {
     loading: true,
+    showModal: false,
   };
 
   async componentDidMount() {
@@ -32,6 +34,10 @@ class Details extends Component {
     });
   }
 
+  toggleModal = () => this.setState({ showModal: !this.state.showModal });
+
+  adopt = () => (window.location = 'http://bit.ly/pet-adopt');
+
   render() {
     if (this.state.loading) {
       return (
@@ -49,6 +55,7 @@ class Details extends Component {
       name,
       state,
       images,
+      showModal,
     } = this.state;
 
     if (!animal) {
@@ -65,11 +72,23 @@ class Details extends Component {
           </h2>
           <ThemeContext.Consumer>
             {([theme]) => (
-              <button style={{ backgroundColor: theme }}>Adopt {name} </button>
+              <button
+                onClick={this.toggleModal}
+                style={{ backgroundColor: theme }}
+              >
+                Adopt {name}{' '}
+              </button>
             )}
           </ThemeContext.Consumer>
           <p>{description}</p>
         </div>
+        {showModal ? (
+          <Modal>
+            <h1>Would you like to adopt {name}?</h1>
+            <button onClick={this.adopt}>yes!</button>
+            <button onClick={this.toggleModal}>no, I&apos;m a monster!</button>
+          </Modal>
+        ) : null}
       </div>
     );
   }
