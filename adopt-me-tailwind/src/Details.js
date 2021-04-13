@@ -63,30 +63,51 @@ class Details extends Component {
     }
 
     return (
-      <div>
-        <div className="details">
-          <Carousel images={images} />
+      <div className="grid grid-cols-3 grid-rows-3 bg-green-200 border-2 rounded-lg shadow-lg grid-col1">
+        <Carousel images={images} />
+        <div className="col-start-2 col-end-4 row-start-2 row-end-4">
           <h1>{name}</h1>
           <h2>
             {animal} - {breed} - {city}, {state}
           </h2>
-          <ThemeContext.Consumer>
-            {([theme]) => (
+          <p>{description}</p>
+        </div>
+        <ThemeContext.Consumer>
+          {([theme]) => (
+            <div className="flex items-center justify-center">
               <button
+                className="inline-flex items-center px-6 py-3 text-base font-medium text-white border border-transparent rounded-md shadow-sm hover:opacity-50"
                 onClick={this.toggleModal}
                 style={{ backgroundColor: theme }}
               >
                 Adopt {name}{' '}
               </button>
-            )}
-          </ThemeContext.Consumer>
-          <p>{description}</p>
-        </div>
+            </div>
+          )}
+        </ThemeContext.Consumer>
         {showModal ? (
           <Modal>
-            <h1>Would you like to adopt {name}?</h1>
-            <button onClick={this.adopt}>yes!</button>
-            <button onClick={this.toggleModal}>no, I&apos;m a monster!</button>
+            <div className="mt-3 text-center sm:mt-5">
+              <h3 className="text-lg font-medium leading-6 text-gray-900">
+                Would you like to adopt {name}?
+              </h3>
+            </div>
+            <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+              <button
+                type="button"
+                onClick={this.adopt}
+                className="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm"
+              >
+                yes!
+              </button>
+              <button
+                type="button"
+                onClick={this.toggleModal}
+                className="inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
+              >
+                no, I&apos;m a monster!
+              </button>
+            </div>
           </Modal>
         ) : null}
       </div>
