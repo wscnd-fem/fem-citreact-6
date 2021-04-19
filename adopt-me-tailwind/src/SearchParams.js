@@ -1,8 +1,11 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useLayoutEffect } from 'react';
 
 import Results from './Results';
 import ThemeContext from './ThemeContext';
 import useAnimalList from './useAnimalList';
+
+import ListBox from './Listbox';
+import Button from './Button';
 
 const ANIMALS = ['bird', 'cat', 'dog', 'rabbit', 'reptile'];
 
@@ -12,6 +15,7 @@ const SearchParams = () => {
   const [animal, setAnimal] = useState('');
   const [breed, setBreed] = useState('');
   const [animalList] = useAnimalList(animal);
+  const [search, setSearch] = useState(false);
   const [theme, setTheme] = useContext(ThemeContext);
 
   const requestPets = async (animal, breed, location) => {
@@ -20,105 +24,115 @@ const SearchParams = () => {
     );
     const json = await res.json();
     setPets(json.pets);
-    console.log(pets);
   };
+
+  useEffect(() => {
+    setBreed('');
+  }, [animal]);
+
+  useLayoutEffect(() => {
+    console.log(pets);
+  }, [pets]);
+
+  useEffect(() => {
+    const func = async () => {
+      setAnimal('');
+      setLocation('');
+      setBreed('');
+      requestPets(animal, breed, location);
+    };
+    func();
+    setSearch(false);
+  }, [search]); //eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     requestPets(animal, breed, location);
   }, []); //eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="grid grid-cols-4 gap-4 ">
-      <div>
+    <div className="">
+      <div className="px-4 py-12 space-y-12 max-w-md mx-auto  bg-pink-300 rounded-md text-gray-700 ">
         <form
-          className="items-start p-10 bg-gray-200 divide-y divide-gray-900 rounded-lg shadow-lg"
+          className="flex flex-col space-y-6 divide-y-2 divide-red-100 justify-items-center items-center"
           action=""
           onSubmit={(e) => {
             e.preventDefault();
             requestPets(animal, breed, location);
           }}
         >
-          <label
-            className="flex flex-col items-center justify-center w-full pt-4 mb-4 text-center"
-            htmlFor="location"
-          >
-            Location
-            <input
-              className="w-40 h-auto px-4 py-2 rounded-md"
-              id="location"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="Location"
-            />
-          </label>
+          <div className="w-64">
+            <div className="flex justify-between">
+              <label
+                className="block text-sm font-medium text-gray-700"
+                htmlFor="location"
+              >
+                Location
+              </label>
+              <span className="text-sm text-gray-500" id="email-optional">
+                Optional
+              </span>
+            </div>
+            <div className="mt-1">
+              <input
+                className="shadow-sm focus:ring-red-500 focus:border-red-700 block w-full sm:text-sm border-gray-300 rounded-md"
+                id="location"
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="Location"
+              />
+            </div>
+          </div>
 
-          <label
-            className="flex flex-col items-center justify-center w-full pt-4 mb-4 text-center"
-            htmlFor="animal"
-          >
-            Animal
-            <select
-              className="w-40 h-auto px-4 py-2 rounded-md"
-              id="animal"
-              value={animal}
-              onChange={(e) => {
-                e.target.value==="" ? setBreed("") : null
-                setAnimal(e.target.value)
+          <ListBox
+            value={animal}
+            onChange={setAnimal}
+            disabled={false}
+            array={ANIMALS}
+            placeHolder={['Select Animal', 'Select Animal']}
+            label={'Animal'}
+          />
+
+          {}
+
+          <ListBox
+            value={breed}
+            onChange={setBreed}
+            disabled={animal === ''}
+            array={animalList}
+            placeHolder={['Choose Animal', 'Select Breed']}
+            label={'Breed'}
+          />
+
+          <ListBox
+            value={theme}
+            onChange={setTheme}
+            disabled={false}
+            array={['darkblue', 'peru', 'chartreuse', 'mediumorchid']}
+            placeHolder={['Choose Animal', 'Select Breed']}
+            label={'Color'}
+            bg={theme}
+          />
+
+          <div className="py-5 mx-auto">
+            <Button
+              onClick={() => {
+                if (breed !== '' || animal !== '' || location !== '') {
+                  setSearch(true);
+                } else {
+                  console.log('not empty');
+                }
               }}
-              onBlur={(e) => setAnimal(e.target.value)}
-            >
-              <option value="" />
-              {ANIMALS.map((animal) => (
-                <option value={animal} key={animal}>
-                  {animal}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label
-            className="flex flex-col items-center justify-center w-full pt-4 mb-4 text-center"
-            htmlFor="breed"
-          >
-            Breed
-            <select
-              className="w-40 h-auto px-4 py-2 rounded-md disabled:opacity-40"
-              disabled={!animalList.length}
-              id="breed"
-              value={breed}
-              onChange={(e) => setBreed(e.target.value)}
-              onBlur={(e) => setBreed(e.target.value)}
-            >
-              <option value="" />
-              {animalList.map((breed) => (
-                <option value={breed} key={breed}>
-                  {breed}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label
-            className="flex flex-col items-center justify-center w-full pt-4 mb-4 text-center"
-            htmlFor="theme"
-          >
-            Theme
-            <select
-              className="w-40 h-auto px-4 py-2 rounded-md"
-              id="theme"
-              value={theme}
-              onChange={(e) => setTheme(e.target.value)}
-              onBlur={(e) => setTheme(e.target.value)}
-            >
-              <option value="darkblue">Dark Blue</option>
-              <option value="peru">Peru</option>
-              <option value="chartreuse">Chartreuse</option>
-              <option value="mediumorchid">Medium Orchid</option>
-            </select>
-          </label>
-          <button style={{ backgroundColor: theme }} type="submit">
-            Submit
-          </button>
+              type="button"
+              placeHolder="Reset"
+            />
+            <Button
+              onClick={() => {}}
+              type="submit"
+              placeHolder="Submit"
+              bg={theme}
+            />
+          </div>
         </form>
       </div>
 
@@ -126,5 +140,9 @@ const SearchParams = () => {
     </div>
   );
 };
+
+/*  button {
+    @apply inline-flex items-center px-6 py-3 text-base font-medium text-white border border-transparent rounded-md shadow-sm hover:opacity-50;
+  } */
 
 export default SearchParams;

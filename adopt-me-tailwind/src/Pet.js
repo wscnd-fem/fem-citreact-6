@@ -11,17 +11,21 @@ const Pet = ({ name, animal, breed, images, location, id }) => {
 
   return (
     <Link to={`/details/${id}`}>
-      <img
-        className="w-32 h-32 mx-auto bg-black rounded-full "
-        src={hero}
-        alt={name}
-      />
-      <h1 className="mt-6 text-sm font-medium text-gray-900">{name}</h1>
-      <dl className="flex flex-col justify-between flex-grow mt-1">
-        <dd className="text-sm text-gray-500">{animal}</dd>
-        <dd className="text-sm text-gray-500">{breed}</dd>
-        <dd className="text-sm text-gray-500">{location}</dd>
-      </dl>
+      <div className="aspect-w-3 aspect-h-2 sm:aspect-w-3 sm:aspect-h-3">
+        <img
+          className="object-cover shadow-lg rounded-lg"
+          src={hero}
+          alt={name}
+        />
+      </div>
+      <div>
+        <h1 className="">{name}</h1>
+        <dl className="">
+          <dd className="">{animal}</dd>
+          <dd className="">{breed}</dd>
+          <dd className="">{location}</dd>
+        </dl>
+      </div>
     </Link>
   );
 };
