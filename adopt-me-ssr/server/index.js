@@ -1,6 +1,6 @@
 import express from 'express';
 import fs from 'fs';
-import { renderToString } from 'react-dom/server';
+import { renderToNodeStream } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 
 import App from '../src/App';
@@ -17,15 +17,20 @@ app.use('/dist', express.static('dist'));
 app.use((req, res) => {
   const staticContent = {};
 
+  res.write(parts[0]);
+
   const reactMarkup = (
     <StaticRouter url={req.url} context={staticContent}>
       <App />
     </StaticRouter>
   );
-
-  res.status(staticContent.statusCode || 200);
-  res.send(`${parts[0]}${renderToString(reactMarkup)}${parts[1]}`);
-  res.end();
+  const stream = renderToNodeStream(reactMarkup);
+  stream.pipe(res, { end: false });
+  stream.on('end', () => {
+    res.status(staticContent.statusCode || 200);
+    res.write(parts[1]);
+    res.end();
+  });
 });
 
 app.listen(PORT, () => {
