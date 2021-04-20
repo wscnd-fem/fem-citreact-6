@@ -5,9 +5,13 @@
   "main": "src/index.js",
   "license": "MIT",
   "scripts": {
+    "build:client": "parcel build --public-url ./dist/ src/index.html",
+    "build:server": "parcel build -d dist-server --target node server/index.js",
+    "build": "npm run build:client && npm run build:server",
     "dev": "parcel src/index.html",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
-    "lint": "eslint \"src/**/*.{js,jsx}\" --quiet"
+    "lint": "eslint \"src/**/*.{js,jsx}\" --quiet",
+    "start": "npm -s run build && node dist-server/index.js"
   },
   "devDependencies": {
     "@babel/core": "7.12.16",
@@ -25,6 +29,7 @@
     "prettier": "^2.2.1"
   },
   "dependencies": {
+    "express": "^4.17.1",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-router-dom": "5.2.0"
