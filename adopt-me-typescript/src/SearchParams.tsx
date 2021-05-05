@@ -1,34 +1,37 @@
-import {
-  useContext,
-  useEffect,
-  useState
-} from 'react';
+import { useContext, useEffect, useState, FunctionComponent } from 'react';
 
 import Results from './Results';
 import ThemeContext from './ThemeContext';
 import useAnimalList from './useAnimalList';
 
-const ANIMALS = ['bird', 'cat', 'dog', 'rabbit', 'reptile'];
+import { Animal, Pet, PetApiResponse } from './typings/ApiResponseTypes';
+import { RouteComponentProps } from 'react-router-dom';
 
-const SearchParams = () => {
-  const [pets, setPets] = useState([]);
+const ANIMALS: Animal[] = ['bird', 'cat', 'dog', 'rabbit', 'reptile'];
+
+const SearchParams: FunctionComponent<RouteComponentProps> = () => {
+  const [pets, setPets] = useState<Pet[]>([]);
   const [location, setLocation] = useState('');
-  const [animal, setAnimal] = useState('');
-  const [breed, setBreed] = useState('');
+  const [animal, setAnimal] = useState<Animal>('');
+  const [breed, setBreed] = useState<string>('');
   const [animalList] = useAnimalList(animal);
   const [theme, setTheme] = useContext(ThemeContext);
 
-  const requestPets = async (animal, breed, location) => {
+  const requestPets = async (
+    animal: Animal,
+    breed: string,
+    location: string
+  ) => {
     const res = await fetch(
       `http://pets-v2.dev-apis.com/pets?animal=${animal}&location=${location}&breed=${breed}`
     );
-    const json = await res.json();
+    const json = (await res.json()) as PetApiResponse;
     setPets(json.pets);
     console.log(pets);
   };
 
   useEffect(() => {
-    requestPets(animal, breed, location);
+    void requestPets(animal, breed, location);
   }, []); //eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -37,7 +40,7 @@ const SearchParams = () => {
         action=""
         onSubmit={(e) => {
           e.preventDefault();
-          requestPets(animal, breed, location);
+          void requestPets(animal, breed, location);
         }}
       >
         <label htmlFor="location">
@@ -55,8 +58,8 @@ const SearchParams = () => {
           <select
             id="animal"
             value={animal}
-            onChange={(e) => setAnimal(e.target.value)}
-            onBlur={(e) => setAnimal(e.target.value)}
+            onChange={(e) => setAnimal(e.target.value as Animal)}
+            onBlur={(e) => setAnimal(e.target.value as Animal)}
           >
             <option value="" />
             {ANIMALS.map((animal) => (
@@ -77,7 +80,7 @@ const SearchParams = () => {
             onBlur={(e) => setBreed(e.target.value)}
           >
             <option value="" />
-            {animalList.map((breed) => (
+            {animalList.map((breed: string) => (
               <option value={breed} key={breed}>
                 {breed}
               </option>

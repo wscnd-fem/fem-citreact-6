@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 
 import { Link } from 'react-router-dom';
+import { Pet } from './typings/ApiResponseTypes';
 
-const Pet = ({ name, animal, breed, images, location, id }) => {
+type IProps = Pick<Pet, 'id' | 'name' | 'breed' | 'images' | 'animal'> & {
+  location: string;
+};
+
+const Pet: FunctionComponent<IProps> = ({
+  name,
+  animal,
+  breed,
+  images,
+  location,
+  id,
+}) => {
   let hero = 'https://pets-images.dev-apis.com/pets/none.jpg';
 
   if (images.length) {
